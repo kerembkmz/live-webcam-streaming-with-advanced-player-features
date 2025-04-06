@@ -23,7 +23,7 @@ function startFFmpeg() {
     '-bufsize', '3000k',
     '-s', '1280x720',
     '-f', 'dash',
-    '-seg_duration', '2',
+    '-seg_duration', '4',
     '-window_size', '2',
     '-extra_window_size', '1',
     '-use_template', '1',

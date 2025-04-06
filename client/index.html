@@ -1,13 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <title>Streaming App</title>
-  <script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
+    <meta charset="UTF-8" />
+    <title>Streaming App</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
 </head>
+
 <body>
-  <h1>CS418 Project 2!</h1>
-  <video id="videoPlayer" autoplay muted width="640" height="360"></video>
-  <script src="script.js"></script>
+    <h1>CS418 Project 2</h1>
+
+    <video id="videoPlayer" autoplay muted width="1280" height="720"></video>
+
+    <div id="controls">
+        <button id="screenshotButton">Take Screenshot</button>
+        <button id="settingsButton">Settings</button>
+    </div>
+
+    <div id="settingsPanel" style="display: none;">
+        <label for="imageFormat">Screenshot format:</label>
+        <select id="imageFormat">
+            <option value="png" selected>PNG</option>
+            <option value="jpeg">JPEG</option>
+        </select>
+    </div>
+
+    <canvas id="screenshotCanvas" style="display: none;"></canvas>
+    <script src="script.js"></script>
 </body>
+
 </html>
