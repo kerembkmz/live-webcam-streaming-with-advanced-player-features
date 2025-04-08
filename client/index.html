@@ -18,16 +18,32 @@
         <button id="settingsButton">Settings</button>
     </div>
 
+    <div id="latencyDisplay" style="margin-top: 1rem; font-size: 1.2rem; color: #333;">
+        Current Latency: ...
+      </div>
+
     <div id="settingsPanel" style="display: none;">
-        <label for="imageFormat">Screenshot format:</label>
-        <select id="imageFormat">
-            <option value="png" selected>PNG</option>
-            <option value="jpeg">JPEG</option>
-        </select>
+        <div>
+            <label for="imageFormat">Screenshot format:</label>
+            <select id="imageFormat">
+                <option value="png" selected>PNG</option>
+                <option value="jpeg">JPEG</option>
+            </select>
+        </div>
+    
+        <div style="margin-top: 0.5rem;">
+            <label for="segmentDuration">Segment duration (seconds):</label>
+            <select id="segmentDuration">
+                <option value="2" selected>2</option>
+                <option value="4">4</option>
+                <option value="6">6</option>
+            </select>
+        </div>
     </div>
 
     <canvas id="screenshotCanvas" style="display: none;"></canvas>
     <script src="script.js"></script>
+    
 </body>
 
 </html>
