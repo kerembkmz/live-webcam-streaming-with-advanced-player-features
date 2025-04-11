@@ -8,44 +8,48 @@ const imageFormatSelector = document.getElementById('imageFormat');
 const segmentDurationSelector = document.getElementById('segmentDuration');
 
 let playerInitialized = false;
-
 async function waitForManifestAndStartPlayer(playerInitialized) {
-    const maxRetries = 20;
-    const delay = 1000;
-  
-    for (let i = 0; i < maxRetries; i++) {
-      try {
-        const manifestRes = await fetch(url, { cache: "no-store" });
-        const initRes = await fetch('/stream/init-stream0.m4s', { cache: "no-store" });
-        const chunkRes = await fetch('/stream/chunk-stream0-00001.m4s', { cache: "no-store" });
-  
-        if (manifestRes.ok && initRes.ok && chunkRes.ok) {
-          if (playerInitialized)
-          {
-            console.log("since player is initialzed, resetting the player.");
-            player.reset();
-          }
-          console.log('manifest, init, and chunk are available. Initializing player...');
-          const dashUrl = url + `?v=${Date.now()}`;
-          player.updateSettings({
-            streaming: {
-              liveDelay: 2.0,
-              lowLatencyEnabled: true
-            }
-          });
-          player.initialize(video, dashUrl, true);
-          return;
+  const maxRetries = 30;
+  const delay = 1000;
+
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      const manifestRes = await fetch(url, { cache: "no-store" });
+      const initRes = await fetch('/stream/init-stream0.m4s', { cache: "no-store" });
+      const chunk1 = await fetch('/stream/chunk-stream0-00001.m4s', { cache: "no-store" });
+      const chunk2 = await fetch('/stream/chunk-stream0-00002.m4s', { cache: "no-store" });
+      const chunk3 = await fetch('/stream/chunk-stream0-00003.m4s', { cache: "no-store" });
+
+      if (manifestRes.ok && initRes.ok && chunk1.ok && chunk2.ok && chunk3.ok) {
+        if (playerInitialized) {
+          console.log("Since player is initialized, resetting the player.");
+          player.reset();
         }
-      } catch (err) {
-        console.warn(`Waiting for stream to be ready... Retry count: (${i + 1}/20)`);
-        console.error(err);
+
+        console.log('Manifest and 3 chunks are available. Initializing player...');
+        const dashUrl = url + `?v=${Date.now()}`;
+
+        player.updateSettings({
+          streaming: {
+            delay: {
+              liveDelay: 7.0
+            }
+          }
+        });
+
+        player.initialize(video, dashUrl, true);
+        return;
       }
-  
-      await new Promise(resolve => setTimeout(resolve, delay));
+    } catch (err) {
+      console.warn(`Waiting for stream to be ready... Retry count: (${i + 1}/${maxRetries})`);
+      console.error(err);
     }
-  
-    alert('Failed to load video stream. Please try again later.');
+
+    await new Promise(resolve => setTimeout(resolve, delay));
   }
+
+  alert('Failed to load video stream. Please try again later.');
+}
   
   waitForManifestAndStartPlayer(playerInitialized);
   playerInitialized = true;
@@ -71,12 +75,11 @@ screenshotBtn.addEventListener('click', () => {
 });
 
 player.on(dashjs.MediaPlayer.events.PLAYBACK_STARTED, function () {
-    console.log('Playback started — measuring latency...');
+    console.log('Playback started — latency will be measured now');
 
     setInterval(() => {
       const latency = player.getCurrentLiveLatency();
       if (latency != null && !isNaN(latency)) {
-        console.log(`Live Latency: ${latency.toFixed(2)} seconds`);
         document.getElementById('latencyDisplay').textContent =
           `Latency: ${latency.toFixed(2)}s`;
       }

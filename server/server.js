@@ -11,12 +11,14 @@ const OUTPUT_DIR = path.join(__dirname, '..', 'stream_output');
 let ffmpegProcess = null;
 let currentSegmentDuration = 2; 
 
-function startFFmpeg(segmentDuration = currentSegmentDuration) {
+async function startFFmpeg(segmentDuration = currentSegmentDuration) {
   currentSegmentDuration = segmentDuration;
 
   if (ffmpegProcess) {
     console.log('Stopping existing FFmpeg process...');
     ffmpegProcess.kill('SIGINT');
+
+    await new Promise(resolve => setTimeout(resolve, 2000));
   }
 
   if (!fs.existsSync(OUTPUT_DIR)) {
@@ -28,24 +30,33 @@ function startFFmpeg(segmentDuration = currentSegmentDuration) {
     '-framerate', '30',
     '-video_size', '1280x720',
     '-i', '0:0',
+
     '-c:v', 'libx264',
     '-preset', 'ultrafast',
     '-tune', 'zerolatency',
     '-g', '30',
     '-keyint_min', '30',
+    '-sc_threshold', '0',
     '-b:v', '3000k',
-    '-minrate', '3000k',
     '-maxrate', '3000k',
     '-bufsize', '3000k',
-    '-s', '1280x720',
+
+   '-vf',
+`drawtext=fontfile='/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf':\
+text='%{localtime\\:%X}':\
+x=(w-text_w)/2: y=h-(2*text_h):\
+fontcolor=white: fontsize=24:\
+box=1: boxcolor=black@0.5: boxborderw=5`,
+
+
     '-f', 'dash',
     '-seg_duration', `${segmentDuration}`,
-    '-window_size', '2',
+    '-window_size', '0',
     '-extra_window_size', '0',
     '-use_template', '1',
     '-use_timeline', '1',
     '-streaming', '1',
-    '-ldash', '1',
+    '-ldash', '1', 
     '-remove_at_exit', '1',
     path.join(OUTPUT_DIR, 'manifest.mpd')
   ];
