@@ -7,6 +7,10 @@ const settingsPanel = document.getElementById('settingsPanel');
 const imageFormatSelector = document.getElementById('imageFormat');
 const segmentDurationSelector = document.getElementById('segmentDuration');
 
+const liveSlider = document.getElementById('liveSlider');
+const goLiveBtn = document.getElementById('goLiveBtn');
+const timeDisplay = document.getElementById('seekTimeDisplay');
+
 let playerInitialized = false;
 async function waitForManifestAndStartPlayer(playerInitialized) {
   const maxRetries = 30;
@@ -103,3 +107,39 @@ segmentDurationSelector.addEventListener('change', async (e) => {
       alert('Failed to restart FFmpeg.');
     }
   });
+
+
+function formatTime(seconds) {
+  const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+  const secs = Math.floor(seconds % 60).toString().padStart(2, '0');
+  return `${mins}:${secs}`;
+}
+
+setInterval(() => {
+  if (!player.isDynamic()) return;
+
+  const rangeStart = player.timeShiftBufferRange?.start || 0;
+  const rangeEnd = player.duration();
+  const currentTime = player.time();
+
+  if (isNaN(currentTime) || isNaN(rangeStart) || isNaN(rangeEnd)) return;
+
+  const dvrWindow = rangeEnd - rangeStart;
+  const percent = ((currentTime - rangeStart) / dvrWindow) * 100;
+
+  liveSlider.value = Math.min(100, Math.max(0, percent));
+  timeDisplay.textContent = `Time: ${formatTime(currentTime)} / Live`;
+}, 1000);
+
+liveSlider.addEventListener('input', () => {
+  const rangeStart = player.timeShiftBufferRange?.start || 0;
+  const rangeEnd = player.duration();
+  const dvrWindow = rangeEnd - rangeStart;
+  const targetTime = rangeStart + (dvrWindow * (liveSlider.value / 100));
+  player.seek(targetTime);
+});
+
+goLiveBtn.addEventListener('click', () => {
+  player.seek(player.duration());
+});
+
