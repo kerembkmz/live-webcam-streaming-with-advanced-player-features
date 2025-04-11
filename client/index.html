@@ -11,32 +11,29 @@
 <body>
     <h1>CS418 Project 2</h1>
 
-    <video id="videoPlayer" autoplay muted width="1280" height="720"></video>
-
-    <div id="sliderContainer">
+    <div id="videoContainer">
+      <video id="videoPlayer" autoplay muted></video>
+      <div id="sliderContainer">
         <button id="playPauseBtn">⏸</button>
         <input type="range" id="liveSlider" min="0" max="100" value="100" step="1" />
         <button id="goLiveBtn">Live</button>
+      </div>
     </div>
 
     <div id="thumbnailPreview">
         <img id="thumbnailImage" src="" alt="preview" />
       </div>
 
+      <div id="seekTimeDisplay">Time: ...</div>
+
+
+      <div id="latencyDisplay">Current Latency: ...</div>
+
     <div id="controls">
         <button id="screenshotButton">Take Screenshot</button>
         <button id="settingsButton">Settings</button>
     </div>
-    
-    
-      
-      <div id="seekTimeDisplay" style="font-family: monospace; margin-top: 0.5rem;">
-        Time: ...
-      </div>
 
-    <div id="latencyDisplay" style="margin-top: 1rem; font-size: 1.2rem; color: #333;">
-        Current Latency: ...
-      </div>
 
     <div id="settingsPanel" style="display: none;">
         <div>

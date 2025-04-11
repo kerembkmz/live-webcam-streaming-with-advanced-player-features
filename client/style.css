@@ -4,110 +4,181 @@ body {
     align-items: center;
     justify-content: center;
     font-family: sans-serif;
-    background-color: #f8f8f8;
+    background-color: #1d212d;
     margin: 0;
     padding: 2rem;
-}
+  }
+  
+  #seekTimeDisplay {
+    font-family: monospace;
+    font-size: 1.2rem;         /* Bigger text */
+    color: white;              /* White text */
+    margin-top: 1.2rem;        /* More space above */
+    text-align: center;        /* Optional: center it */
+  }
+  
 
-video {
-    border: 2px solid #333;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
+  #videoContainer {
+    position: relative;
+    width: 100%;
+    max-width: 1280px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    background-color: black;
+  }
 
-#controls {
-    margin-top: 1rem;
+  video {
+    width: 100%;
+    border-radius: 0;
+    display: block;
 }
+  
+  #sliderContainer {
+    position: relative;
+    bottom: auto;
+    left: 0;
+    right: 0;
+    padding: 10px 14px;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    z-index: 10;
+  }
+  
+  
+  #latencyDisplay {
+    font-size: 1.2rem;        /* Bigger font */
+    color: white;             /* White text */
+    margin-top: 1.2rem;       /* More spacing above */
+    font-family: monospace;   /* Monospace style to match seekTimeDisplay */
+    text-align: center;       /* Optional: center alignment */
+  }
+  
+  
 
-#controls button {
-    margin: 0 0.5rem;
-    padding: 0.5rem 1rem;
-    font-size: 1rem;
+  #playPauseBtn {
+    padding: 10px 16px;
+    font-size: 1.4rem;
+    background-color: #a7b0c1;
+    color: black;
     border: none;
     border-radius: 6px;
-    background-color: #007bff;
-    color: white;
     cursor: pointer;
     transition: background-color 0.2s ease;
+  }
+  
+  #playPauseBtn:hover {
+    background-color: #b7b7b7;
+  }
+  
+  #controls button {
+    padding: 8px 16px;          /* Slightly bigger than before */
+    font-size: 1.05rem;         /* Slightly larger font */
+    border: none;
+    border-radius: 4px;
+    background-color: #b7b7b7;
+    color: rgb(0, 0, 0);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-top: 0.5rem;         /* Adds a little spacing above each */
+  }
+  
+  #sliderContainer button:hover,
+  #controls button:hover {
+    background-color: #ffffff;
+  }
+  
+  /* === Go Live button when at live edge === */
+  #goLiveBtn.live {
+    background-color: red;
+    font-weight: bold;
+    font-size: 1.1rem;
+    cursor: default;
+  }
+
+  #goLiveBtn {
+    background-color: #28a745;
+    /*green*/color: white;
+    font-weight: bold;
+    font-size: 1.1rem;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    -webkit-transition: background-color 0.2s ease;
+    -moz-transition: background-color 0.2s ease;
+    -ms-transition: background-color 0.2s ease;
+    -o-transition: background-color 0.2s ease;
 }
 
-#controls button:hover {
-    background-color: #0056b3;
-}
-
-#settingsPanel {
+    #goLiveBtn:hover:not(.live) {
+        background-color: #208538;
+    }
+  
+  
+  /* === Slider Styling === */
+  #liveSlider {
+    flex-grow: 1;
+    appearance: none;
+    height: 4px;
+    background: #900000;
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+  }
+  
+  #liveSlider::-webkit-slider-thumb {
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    background: white;
+    border: 2px solid #a50000;
+    border-radius: 50%;
+    margin-top: -5px;
+  }
+  
+  #liveSlider::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    background: white;
+    border: 2px solid #a70000;
+    border-radius: 50%;
+  }
+  
+  /* === Settings Panel === */
+  #settingsPanel {
     margin-top: 1rem;
     padding: 1rem;
     border: 1px solid #ccc;
     border-radius: 8px;
     background-color: #fff;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-#settingsPanel label {
+  }
+  
+  #settingsPanel label {
     font-weight: bold;
     margin-right: 0.5rem;
-}
-
-#settingsPanel select {
+  }
+  
+  #settingsPanel select {
     padding: 0.3rem;
     font-size: 1rem;
     border-radius: 4px;
     border: 1px solid #ccc;
-}
-
-#sliderContainer {
-    margin-top: 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-    width: 100%;
-    max-width: 1280px; /* match video width */
-}
-
-#liveSlider {
-    flex-grow: 1;
-    height: 6px;
-    border-radius: 10px;
-    background: linear-gradient(to right, #007bff, #28a745);
-    outline: none;
-    transition: background 0.3s ease;
   }
   
-  #liveSlider::-webkit-slider-thumb {
-    width: 20px;
-    height: 20px;
-    background: white;
-    border: 3px solid #007bff;
-    border-radius: 50%;
-    box-shadow: 0 0 4px rgba(0,0,0,0.2);
-  }
-#sliderContainer button {
-    padding: 0.4rem 0.8rem;
-    font-size: 1rem;
-    border: none;
-    border-radius: 6px;
-    background-color: #28a745;
-    color: white;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
-#sliderContainer button:hover {
-    background-color: #1e7e34;
-}
-
-#thumbnailPreview {
+  /* === Thumbnail Preview === */
+  #thumbnailPreview {
     position: absolute;
     display: none;
     pointer-events: none;
     z-index: 100;
     transform: translate(-50%, -110%);
     transition: opacity 0.1s ease-in-out;
-}
-
-#thumbnailImage {
+  }
+  
+  #thumbnailImage {
     width: 160px;
     height: 90px;
     border: 2px solid #333;
@@ -115,38 +186,19 @@ video {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
     object-fit: cover;
     background-color: black;
-}
-
-/* Default (small) */
-#thumbnailImage {
-    width: 160px;
-    height: 90px;
   }
   
-  /* Medium size */
+  /* === Thumbnail size variants === */
   #thumbnailImage.medium {
     width: 240px;
     height: 135px;
   }
-  
-  /* Large size */
   #thumbnailImage.large {
     width: 360px;
     height: 202px;
   }
-
   #thumbnailImage.veryLarge {
     width: 480px;
     height: 270px;
   }
-
-  #goLiveBtn.live {
-    padding: 0.3rem 0.8rem;
-    border-radius: 6px;
-    background-color: red;
-    color: white;
-    border: none;
-    font-weight: bold;
-    font-size: 0.9rem;
-    cursor: default;
-  }
+  
