@@ -13,15 +13,22 @@
 
     <video id="videoPlayer" autoplay muted width="1280" height="720"></video>
 
+    <div id="sliderContainer">
+        <button id="playPauseBtn">⏸</button>
+        <input type="range" id="liveSlider" min="0" max="100" value="100" step="1" />
+        <button id="goLiveBtn">Live</button>
+    </div>
+
+    <div id="thumbnailPreview">
+        <img id="thumbnailImage" src="" alt="preview" />
+      </div>
+
     <div id="controls">
         <button id="screenshotButton">Take Screenshot</button>
         <button id="settingsButton">Settings</button>
     </div>
     
-    <div id="sliderContainer" style="margin-top: 1rem; display: flex; align-items: center; gap: 1rem;">
-        <input type="range" id="liveSlider" min="0" max="100" value="100" step="1" style="width: 400px;" />
-        <button id="goLiveBtn">Go Live</button>
-      </div>
+    
       
       <div id="seekTimeDisplay" style="font-family: monospace; margin-top: 0.5rem;">
         Time: ...
@@ -48,6 +55,16 @@
                 <option value="6">6</option>
             </select>
         </div>
+
+        <div style="margin-top: 0.5rem;">
+            <label for="thumbnailSize">Thumbnail size:</label>
+            <select id="thumbnailSize">
+              <option value="small" selected>Small</option>
+              <option value="medium">Medium</option>
+              <option value="large">Large</option>
+              <option value="veryLarge">Very Large</option>
+            </select>
+          </div>
     </div>
 
     <canvas id="screenshotCanvas" style="display: none;"></canvas>

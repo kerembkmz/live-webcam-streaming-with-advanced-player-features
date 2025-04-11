@@ -12,6 +12,45 @@ const goLiveBtn = document.getElementById('goLiveBtn');
 const timeDisplay = document.getElementById('seekTimeDisplay');
 
 let playerInitialized = false;
+let isAtLiveEdge = true;
+goLiveBtn.classList.add('live');
+const thumbnailPreview = document.getElementById('thumbnailPreview');
+const thumbnailImage = document.getElementById('thumbnailImage');
+
+const thumbnailSizeSelector = document.getElementById('thumbnailSize');
+
+thumbnailSizeSelector.addEventListener('change', () => {
+  const selected = thumbnailSizeSelector.value;
+  thumbnailImage.classList.remove('small', 'medium', 'large', 'veryLarge');
+  thumbnailImage.classList.add(selected);
+});
+
+liveSlider.addEventListener('mousemove', (e) => {
+  const rect = liveSlider.getBoundingClientRect();
+  const percent = (e.clientX - rect.left) / rect.width;
+  const rangeStart = player.timeShiftBufferRange?.start || 0;
+  const rangeEnd = player.duration();
+  const dvrWindow = rangeEnd - rangeStart;
+  const targetTime = rangeStart + (dvrWindow * percent);
+
+  const index = Math.floor(targetTime); 
+  const paddedIndex = index.toString().padStart(3, '0'); 
+  const thumbnailPath = `/thumbnails/thumb-${paddedIndex}.jpg`;
+
+  thumbnailImage.src = thumbnailPath;
+  thumbnailPreview.style.display = 'block';
+  thumbnailPreview.style.left = `${e.clientX}px`;
+  thumbnailPreview.style.top = `${rect.top}px`;
+});
+
+
+liveSlider.addEventListener('mouseleave', () => {
+  thumbnailPreview.style.display = 'none';
+});
+
+const playPauseBtn = document.getElementById('playPauseBtn');
+
+
 async function waitForManifestAndStartPlayer(playerInitialized) {
   const maxRetries = 30;
   const delay = 1000;
@@ -119,8 +158,9 @@ setInterval(() => {
   if (!player.isDynamic()) return;
 
   const rangeStart = player.timeShiftBufferRange?.start || 0;
-  const rangeEnd = player.duration();
   const currentTime = player.time();
+  const rangeEnd = isAtLiveEdge ? currentTime : player.duration();
+  
 
   if (isNaN(currentTime) || isNaN(rangeStart) || isNaN(rangeEnd)) return;
 
@@ -132,6 +172,9 @@ setInterval(() => {
 }, 1000);
 
 liveSlider.addEventListener('input', () => {
+  goLiveBtn.textContent = 'Go Live';
+  goLiveBtn.classList.remove('live');
+  isAtLiveEdge = false;
   const rangeStart = player.timeShiftBufferRange?.start || 0;
   const rangeEnd = player.duration();
   const dvrWindow = rangeEnd - rangeStart;
@@ -140,6 +183,22 @@ liveSlider.addEventListener('input', () => {
 });
 
 goLiveBtn.addEventListener('click', () => {
+  isAtLiveEdge = true;
   player.seek(player.duration());
+  goLiveBtn.textContent = 'LIVE';
+  goLiveBtn.classList.add('live');
 });
 
+
+
+playPauseBtn.addEventListener('click', () => {
+  if (video.paused) {
+    video.play();
+    playPauseBtn.textContent = '⏸';
+  } else {
+    goLiveBtn.textContent = 'Go Live';
+    goLiveBtn.classList.remove('live');
+    video.pause();
+    playPauseBtn.textContent = '▶';
+  }
+});
