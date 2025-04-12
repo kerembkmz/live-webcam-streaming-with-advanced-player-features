@@ -10,16 +10,18 @@ This project is a course project. The full project description and requirements 
 ## Features
 
 - Live webcam capture using FFmpeg (`avfoundation` input on macOS)
-- **Low-latency MPEG-DASH** stream configuration for near real-time playback
+- **MPEG-DASH** stream configuration for near real-time playback (around 6 second delay)
+- Supports Adaptive Bitrate Streaming (can be configured automatic or manually)
 - Node.js + Express server that manages FFmpeg and serves DASH content
 - Custom HTML5 player with:
-  - Play/Pause controls
+  - Play/Pause controls and audio options
   - Seek bar (with thumbnail previews enabled)
   - **"Go Live"** button to jump to the live edge
   - Screenshot functionality (capturing the current frame)
   - Latency and buffer monitoring display
+  - Support for different video and thumbnail sizes
 - Properly segmented live streaming using `ffmpeg`’s DASH Live profile
-- Clean auto-removal of segment files after process exit
+- Clean auto-removal of all generated files (semgnet, thumbnail and etc.) after process exit
 
 ---
 
