@@ -9,13 +9,20 @@
 </head>
 
 <body>
-    <h1>CS418 Project 2</h1>
-
-    <div id="videoContainer">
+    <div id="videoContainer" class="medium">
       <video id="videoPlayer" autoplay muted></video>
       <div id="sliderContainer">
         <button id="playPauseBtn">⏸</button>
+        <div id="volumeControl">
+          <button id="volumeToggleBtn">
+            <img id="volumeIcon" src="icons/no_audio.png" alt="Volume" />
+          </button>
+          <div id="volumeSliderContainer">
+            <input type="range" id="volumeSlider" min="0" max="100" value="100" step="1" />
+          </div>
+        </div>
         <input type="range" id="liveSlider" min="0" max="100" value="100" step="1" />
+        <button id="presentationToggleBtn">⛶</button>
         <button id="goLiveBtn">Live</button>
       </div>
     </div>

@@ -19,6 +19,51 @@ const thumbnailImage = document.getElementById('thumbnailImage');
 
 const thumbnailSizeSelector = document.getElementById('thumbnailSize');
 
+
+const volumeSlider = document.getElementById('volumeSlider');
+const volumeIcon = document.getElementById('volumeIcon');
+const volumeToggleBtn = document.getElementById('volumeToggleBtn');
+
+volumeToggleBtn.addEventListener('click', () => {
+  if (video.muted || video.volume === 0) {
+    video.muted = false;
+    video.volume = 1.0;
+    volumeSlider.value = 100;
+    volumeIcon.src = 'icons/audio.png';
+  } else {
+    video.muted = true;
+    volumeIcon.src = 'icons/no_audio.png';
+  }
+});
+
+volumeSlider.addEventListener('input', () => {
+  const value = volumeSlider.value;
+  video.volume = value / 100;
+
+  if (video.muted && value > 0) {
+    video.muted = false;
+    volumeIcon.src = 'icons/audio.png';
+  }
+
+  if (value === '0') {
+    video.muted = true;
+    volumeIcon.src = 'icons/no_audio.png';
+  }
+});
+
+const presentationToggleBtn = document.getElementById('presentationToggleBtn');
+const videoContainer = document.getElementById('videoContainer');
+
+presentationToggleBtn.addEventListener('click', () => {
+  if (videoContainer.classList.contains('wide')) {
+    videoContainer.classList.remove('wide');
+    videoContainer.classList.add('medium');
+  } else {
+    videoContainer.classList.remove('medium');
+    videoContainer.classList.add('wide');
+  }
+});
+
 thumbnailSizeSelector.addEventListener('change', () => {
   const selected = thumbnailSizeSelector.value;
   thumbnailImage.classList.remove('small', 'medium', 'large', 'veryLarge');

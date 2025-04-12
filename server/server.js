@@ -50,6 +50,8 @@ async function startFFmpeg(segmentDuration = currentSegmentDuration) {
     '-b:v', '3000k',
     '-maxrate', '3000k',
     '-bufsize', '3000k',
+    '-c:a', 'aac',          
+    '-b:a', '128k',
     '-vf',
       `drawtext=fontfile='/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf':\
 text='%{localtime\\:%X}':\
