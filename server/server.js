@@ -38,26 +38,38 @@ async function startFFmpeg(segmentDuration = currentSegmentDuration) {
 
   const ffmpegArgs = [
     '-f', 'avfoundation',
-    '-framerate', '30',
-    '-video_size', '1280x720',
-    '-i', '0:0',
-    '-c:v', 'libx264',
-    '-preset', 'ultrafast',
-    '-tune', 'zerolatency',
-    '-g', '30',
-    '-keyint_min', '30',
-    '-sc_threshold', '0',
-    '-b:v', '3000k',
-    '-maxrate', '3000k',
-    '-bufsize', '3000k',
-    '-c:a', 'aac',          
-    '-b:a', '128k',
-    '-vf',
-      `drawtext=fontfile='/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf':\
-text='%{localtime\\:%X}':\
-x=(w-text_w)/2: y=h-(2*text_h):\
-fontcolor=white: fontsize=24:\
-box=1: boxcolor=black@0.5: boxborderw=5`,
+  '-framerate', '30',
+  '-video_size', '1280x720',
+  '-i', '0:0', // webcam + mic
+
+  // --- Video stream settings ---
+  '-preset', 'ultrafast',
+  '-tune', 'zerolatency',
+  '-g', '30',
+  '-keyint_min', '30',
+  '-sc_threshold', '0',
+
+ '-c:a', 'aac',
+  '-b:a', '128k',
+  '-ar', '48000',
+  '-ac', '1',
+
+  // Use filter_complex to draw text and then split + scale
+  '-filter_complex',
+  `[0:v]drawtext=fontfile='/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf':\
+text='%{localtime\\:%X}':x=(w-text_w)/2:y=h-(2*text_h):\
+fontcolor=white:fontsize=24:box=1:boxcolor=black@0.5:boxborderw=5,split=3[v1][v2][v3];\
+[v2]scale=854:480[v480];\
+[v3]scale=640:360[v360]`,
+
+  // Map the video representations
+  '-map', '[v1]', '-c:v:0', 'libx264', '-b:v:0', '3000k', '-maxrate:v:0', '3000k', '-bufsize:v:0', '3000k',
+  '-map', '[v480]', '-c:v:1', 'libx264', '-b:v:1', '1500k', '-maxrate:v:1', '1500k', '-bufsize:v:1', '1500k',
+  '-map', '[v360]', '-c:v:2', 'libx264', '-b:v:2', '800k', '-maxrate:v:2', '800k', '-bufsize:v:2', '800k',
+
+  // Map audio
+  '-map', '0:a:0',
+
     '-f', 'dash',
     '-seg_duration', `${segmentDuration}`,
     '-window_size', '0',

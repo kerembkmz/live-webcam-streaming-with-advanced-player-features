@@ -31,10 +31,10 @@
         <img id="thumbnailImage" src="" alt="preview" />
       </div>
 
-      <div id="seekTimeDisplay">Time: ...</div>
-
 
       <div id="latencyDisplay">Current Latency: ...</div>
+
+      <div id="resolutionDisplay">Current Resolution: ...</div>
 
     <div id="controls">
         <button id="screenshotButton">Take Screenshot</button>
@@ -43,12 +43,23 @@
 
 
     <div id="settingsPanel" style="display: none;">
+      
         <div>
             <label for="imageFormat">Screenshot format:</label>
             <select id="imageFormat">
                 <option value="png" selected>PNG</option>
                 <option value="jpeg">JPEG</option>
             </select>
+        </div>
+
+        <div style="margin-top: 0.5rem;">
+          <label for="videoQuality">Video quality:</label>
+          <select id="videoQuality">
+            <option value="auto">Auto</option>
+            <option value="0" selected>720p (High)</option>
+            <option value="1">480p (Medium)</option>
+            <option value="2">360p (Low)</option>
+          </select>
         </div>
     
         <div style="margin-top: 0.5rem;">

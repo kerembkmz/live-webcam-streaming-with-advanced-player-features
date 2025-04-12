@@ -24,6 +24,46 @@ const volumeSlider = document.getElementById('volumeSlider');
 const volumeIcon = document.getElementById('volumeIcon');
 const volumeToggleBtn = document.getElementById('volumeToggleBtn');
 
+
+player.on(dashjs.MediaPlayer.events.STREAM_INITIALIZED, () => {
+  const resolutionSelector = document.getElementById('videoQuality');
+
+  resolutionSelector.addEventListener('change', () => {
+    const selected = resolutionSelector.value;
+
+    if (selected === 'auto') {
+      player.updateSettings({
+        streaming: {
+          abr: {
+            autoSwitchBitrate: {
+              video: true
+            }
+          }
+        }
+      });
+    } else {
+      player.updateSettings({
+        streaming: {
+          abr: {
+            autoSwitchBitrate: {
+              video: false
+            }
+          }
+        }
+      });
+
+      const tracks = player.getTracksFor('video');
+      const track = tracks[parseInt(selected)];
+      if (track) {
+        player.setCurrentTrack(track);
+      } else {
+        console.warn("Selected track not found.");
+      }
+    }
+  });
+});
+
+
 volumeToggleBtn.addEventListener('click', () => {
   if (video.muted || video.volume === 0) {
     video.muted = false;
@@ -212,8 +252,7 @@ setInterval(() => {
   const dvrWindow = rangeEnd - rangeStart;
   const percent = ((currentTime - rangeStart) / dvrWindow) * 100;
 
-  liveSlider.value = Math.min(100, Math.max(0, percent));
-  timeDisplay.textContent = `Time: ${formatTime(currentTime)} / Live`;
+  liveSlider.value = Math.min(100, Math.max(0, percent));  
 }, 1000);
 
 liveSlider.addEventListener('input', () => {
@@ -247,3 +286,16 @@ playPauseBtn.addEventListener('click', () => {
     playPauseBtn.textContent = '▶';
   }
 });
+
+
+setInterval(() => {
+  const currentTrack = player.getCurrentTrackFor('video');
+  console.log(currentTrack);
+
+  if (currentTrack && currentTrack.bitrateList?.length > 0) {
+    const res = currentTrack.bitrateList[0].height || 'unknown';
+    document.getElementById('resolutionDisplay').textContent = `Current Resolution: ${res}p`;
+  } else {
+    document.getElementById('resolutionDisplay').textContent = 'Current Resolution: unknown';
+  }
+}, 1000);

@@ -104,6 +104,7 @@ body {
 
 #volumeToggleBtn:hover {
   background: transparent; /* prevent white bg */
+  background-color: #1d212d;
 }
 
 #volumeToggleBtn img {
@@ -134,14 +135,24 @@ body {
     font-family: monospace; 
     text-align: center;       
   }
+
+  #resolutionDisplay {
+  
+      font-size: 1.2rem;      
+      color: white;          
+      margin-top: 1.2rem;     
+      font-family: monospace; 
+      text-align: center;       
+    
+  }
   
   
 
   #playPauseBtn {
     padding: 10px 16px;
     font-size: 1.4rem;
-    background-color: #a7b0c1;
-    color: black;
+    background-color: black;
+    color: white;
     border: none;
     border-radius: 6px;
     cursor: pointer;
@@ -149,7 +160,7 @@ body {
   }
   
   #playPauseBtn:hover {
-    background-color: #b7b7b7;
+    background-color: #444444;
   }
   
   #controls button {
@@ -164,6 +175,24 @@ body {
     margin-top: 0.5rem;
   }
   
+  #playPauseBtn:hover,
+  #volumeToggleBtn:hover,
+  #presentationToggleBtn:hover {
+    background-color: rgb(72, 72, 72) !important;
+    color: white !important;
+  }
+
+  #presentationToggleBtn {
+    background-color: rgb(0, 0, 0);
+    color: white;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+
   #sliderContainer button:hover,
   #controls button:hover {
     background-color: #ffffff;
