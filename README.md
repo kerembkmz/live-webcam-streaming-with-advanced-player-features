@@ -9,19 +9,23 @@ This project is a course project. The full project description and requirements 
 
 ## Features
 
-- Live webcam capture using FFmpeg (`avfoundation` input on macOS)
-- **MPEG-DASH** stream configuration for near real-time playback (around 6 second delay)
-- Supports Adaptive Bitrate Streaming (can be configured automatic or manually)
-- Node.js + Express server that manages FFmpeg and serves DASH content
-- Custom HTML5 player with:
-  - Play/Pause controls and audio options
-  - Seek bar (with thumbnail previews enabled)
-  - **"Go Live"** button to jump to the live edge
-  - Screenshot functionality (capturing the current frame)
-  - Latency and buffer monitoring display
-  - Support for different video and thumbnail sizes
-- Properly segmented live streaming using `ffmpeg`’s DASH Live profile
-- Clean auto-removal of all generated files (semgnet, thumbnail and etc.) after process exit
+- **Live Video Capture** via webcam and mic using FFmpeg (`avfoundation` on macOS)
+- **MPEG-DASH Live Streaming** using FFmpeg’s low-latency profile with configurable segment durations (2s, 4s, 6s)
+- **Adaptive Bitrate Streaming** with 3 quality levels (720p, 480p, 360p), automatic or manual switching
+- **Self-hosted Express Server** that:
+  - Launches FFmpeg dynamically
+  - Hosts DASH streams and thumbnails
+  - Responds to config updates (like segment duration)
+- **Custom HTML5 Video Player** with:
+  - Play / Pause toggle
+  - Volume slider + mute toggle
+  - Seek bar with hoverable thumbnail preview
+  - “Go Live” button to jump to the live edge
+  - Screenshot functionality (PNG / JPEG export)
+  - Resolution & latency display
+  - Dynamic layout toggle (medium/wide mode)
+  - Settings panel for segment duration and thumbnail size
+- **Clean Exit Handling**: All thumbnails and generated segments are auto-removed on shutdown
 
 ---
 
@@ -34,3 +38,24 @@ This project is a course project. The full project description and requirements 
 - HTML5, CSS, JavaScript
 
 ---
+
+## 🧠 How it Works (Behind the Scenes)
+
+- **Stream Generation:** FFmpeg captures video and audio from the webcam and encodes it to H.264/AAC. The `-f dash` flag with `-ldash 1` enables the DASH live profile with low latency.
+- **Multi-Representation Encoding:** Four different video resolutions (720p, 480p, 360p, 144p) are generated in parallel using FFmpeg’s split and scale filters, allowing dynamic bitrate switching on the client based on network conditions or user preference.
+- **Player Initialization Wait Logic:** The frontend waits until the DASH manifest and at least 3 segments are available before initializing playback, ensuring a smooth viewer experience even if FFmpeg starts late.
+- **Thumbnails:** On the server, FFmpeg periodically extracts a frame from the stream using `-ss <timestamp>` and `-frames:v 1`. These are served via `/thumbnails/` and dynamically rendered in the player on seek hover.
+- **Segment Duration Switching:** The segment duration selector sends a POST request to restart FFmpeg with a new `-seg_duration`, allowing live control of stream granularity.
+- **Live Latency Tracking:** The player calculates and displays current live latency every second using dash.js APIs.
+- **Screenshot Feature:** The current video frame is drawn to a hidden `<canvas>` and exported as an image.
+- **Segment & Thumbnail Cleanup:** On server exit (via SIGINT or SIGTERM), all generated DASH segments and thumbnails are cleaned up from the filesystem to avoid clutter and storage bloat.
+
+---
+
+
+## Try on your own
+
+1. **Install Node.js** if not already installed.
+2. Run the server:
+   ```bash
+   node server/server.js
