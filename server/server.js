@@ -57,15 +57,17 @@ async function startFFmpeg(segmentDuration = currentSegmentDuration) {
   // Use filter_complex to draw text and then split + scale
   '-filter_complex',
   `[0:v]drawtext=fontfile='/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf':\
-text='%{localtime\\:%X}':x=(w-text_w)/2:y=h-(2*text_h):\
-fontcolor=white:fontsize=24:box=1:boxcolor=black@0.5:boxborderw=5,split=3[v1][v2][v3];\
-[v2]scale=854:480[v480];\
-[v3]scale=640:360[v360]`,
+  text='%{localtime\\:%X}':x=(w-text_w)/2:y=h-(2*text_h):\
+  fontcolor=white:fontsize=24:box=1:boxcolor=black@0.5:boxborderw=5,split=4[v1][v2][v3][v4];\
+  [v2]scale=854:480[v480];\
+  [v3]scale=640:360[v360];\
+  [v4]scale=256:144[v144]`,
 
   // Map the video representations
-  '-map', '[v1]', '-c:v:0', 'libx264', '-b:v:0', '3000k', '-maxrate:v:0', '3000k', '-bufsize:v:0', '3000k',
+  '-map', '[v1]',   '-c:v:0', 'libx264', '-b:v:0', '3000k', '-maxrate:v:0', '3000k', '-bufsize:v:0', '3000k',
   '-map', '[v480]', '-c:v:1', 'libx264', '-b:v:1', '1500k', '-maxrate:v:1', '1500k', '-bufsize:v:1', '1500k',
-  '-map', '[v360]', '-c:v:2', 'libx264', '-b:v:2', '800k', '-maxrate:v:2', '800k', '-bufsize:v:2', '800k',
+  '-map', '[v360]', '-c:v:2', 'libx264', '-b:v:2', '800k',  '-maxrate:v:2', '800k',  '-bufsize:v:2', '800k',
+  '-map', '[v144]', '-c:v:3', 'libx264', '-b:v:3', '300k',  '-maxrate:v:3', '300k',  '-bufsize:v:3', '300k',
 
   // Map audio
   '-map', '0:a:0',
