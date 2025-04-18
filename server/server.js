@@ -37,51 +37,54 @@ async function startFFmpeg(segmentDuration = currentSegmentDuration) {
   }
 
   const ffmpegArgs = [
-    '-f', 'avfoundation',
-  '-framerate', '30',
-  '-video_size', '1280x720',
-  '-i', '0:0', // webcam + mic
+    // Capture Settings (Mac Only, uses AVFoundation)
+    '-f', 'avfoundation', 
+    '-framerate', '30', //capture fps is set to 30
+    '-video_size', '1280x720',  //capture resolution
+    '-i', '0:0', // webcam + mic
 
-  // --- Video stream settings ---
-  '-preset', 'ultrafast',
-  '-tune', 'zerolatency',
-  '-g', '30',
-  '-keyint_min', '30',
-  '-sc_threshold', '0',
+    // Encoding settings for low-latency
+    '-preset', 'ultrafast', //use the fastest encoding
+    '-tune', 'zerolatency', //optimize for lowest latency
+    '-g', '30', //GOP Size: 1 (since 30FPS)
+    '-keyint_min', '30', //Minimum GOP Size
+    '-sc_threshold', '0', //Disabling scene change detection for unwanted keyframes
 
- '-c:a', 'aac',
-  '-b:a', '128k',
-  '-ar', '48000',
-  '-ac', '1',
+    // Audio Encoding
+    '-c:a', 'aac', //codec: AAC
+    '-b:a', '128k', //bitrate: 128kbps
+    '-ar', '48000', //sample rate: 48kHz
+    '-ac', '1', //mono audio
 
-  // Use filter_complex to draw text and then split + scale
-  '-filter_complex',
-  `[0:v]drawtext=fontfile='/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf':\
+    // video filter: adding timestamp overlay, splitting and scaling for ABR
+    '-filter_complex',
+    `[0:v]drawtext=fontfile='/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf':\
   text='%{localtime\\:%X}':x=(w-text_w)/2:y=h-(2*text_h):\
   fontcolor=white:fontsize=24:box=1:boxcolor=black@0.5:boxborderw=5,split=4[v1][v2][v3][v4];\
   [v2]scale=854:480[v480];\
   [v3]scale=640:360[v360];\
   [v4]scale=256:144[v144]`,
 
-  // Map the video representations
-  '-map', '[v1]',   '-c:v:0', 'libx264', '-b:v:0', '3000k', '-maxrate:v:0', '3000k', '-bufsize:v:0', '3000k',
-  '-map', '[v480]', '-c:v:1', 'libx264', '-b:v:1', '1500k', '-maxrate:v:1', '1500k', '-bufsize:v:1', '1500k',
-  '-map', '[v360]', '-c:v:2', 'libx264', '-b:v:2', '800k',  '-maxrate:v:2', '800k',  '-bufsize:v:2', '800k',
-  '-map', '[v144]', '-c:v:3', 'libx264', '-b:v:3', '300k',  '-maxrate:v:3', '300k',  '-bufsize:v:3', '300k',
+    // Mapping the video representations
+    '-map', '[v1]', '-c:v:0', 'libx264', '-b:v:0', '3000k', '-maxrate:v:0', '3000k', '-bufsize:v:0', '3000k',
+    '-map', '[v480]', '-c:v:1', 'libx264', '-b:v:1', '1500k', '-maxrate:v:1', '1500k', '-bufsize:v:1', '1500k',
+    '-map', '[v360]', '-c:v:2', 'libx264', '-b:v:2', '800k', '-maxrate:v:2', '800k', '-bufsize:v:2', '800k',
+    '-map', '[v144]', '-c:v:3', 'libx264', '-b:v:3', '300k', '-maxrate:v:3', '300k', '-bufsize:v:3', '300k',
 
-  // Map audio
-  '-map', '0:a:0',
+    // Map audio
+    '-map', '0:a:0',
 
-    '-f', 'dash',
-    '-seg_duration', `${segmentDuration}`,
-    '-window_size', '0',
-    '-extra_window_size', '0',
-    '-use_template', '1',
-    '-use_timeline', '1',
-    '-streaming', '1',
-    '-ldash', '1',
-    '-remove_at_exit', '1',
-    path.join(OUTPUT_DIR, 'manifest.mpd')
+    // Dash output settings
+    '-f', 'dash', //MPEG-DASH output
+    '-seg_duration', `${segmentDuration}`, //Segment length in seconds (dynamically set)
+    '-window_size', '0', //keeping all segments in the manifest (for full seek ability)
+    '-extra_window_size', '0', //no extra buffer
+    '-use_template', '1', //template for segment file naming
+    '-use_timeline', '1', //use timeline entry in the manifest
+    '-streaming', '1', //enable streaming
+    '-ldash', '1', //low-latency DASH profile
+    '-remove_at_exit', '1', //cleanup segments afterwards
+    path.join(OUTPUT_DIR, 'manifest.mpd') //output manifest and segments to stream folder
   ];
 
   console.log(`Starting FFmpeg with segment duration = ${segmentDuration}s`);
