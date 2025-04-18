@@ -128,10 +128,10 @@ function generateNextThumbnail() {
 
   thumbProc.on('close', code => {
     if (code === 0 && !ffmpegError) {
-      console.log(`✅ Generated ${path.basename(thumbPath)}`);
+      console.log(` Generated ${path.basename(thumbPath)}`);
       lastThumbIndex++; // Only advance if successful
     } else {
-      console.warn(`⏳ Retry thumb-${String(index).padStart(3, '0')} later...`);
+      console.warn(` Retry thumb-${String(index).padStart(3, '0')} later...`);
     }
 
     setTimeout(generateNextThumbnail, 200);
@@ -169,18 +169,18 @@ function cleanThumbnails() {
     fs.readdirSync(THUMBNAIL_DIR).forEach(file => {
       fs.unlinkSync(path.join(THUMBNAIL_DIR, file));
     });
-    console.log('🧹 Thumbnails cleaned up on exit.');
+    console.log(' Thumbnails cleaned up on exit.');
   }
 }
 
 process.on('SIGINT', () => {
-  console.log('\n📦 Server shutting down (SIGINT)...');
+  console.log('\n Server shutting down (SIGINT)...');
   cleanThumbnails();
   process.exit(0);
 });
 
 process.on('SIGTERM', () => {
-  console.log('\n📦 Server shutting down (SIGTERM)...');
+  console.log('\n Server shutting down (SIGTERM)...');
   cleanThumbnails();
   process.exit(0);
 });
