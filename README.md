@@ -56,6 +56,17 @@ This project is a course project. The full project description and requirements 
 ## Try on your own
 
 1. **Install Node.js** if not already installed.
-2. Run the server:
+2. **Install FFmpeg** if not already installed.
+3. Clone the repository and navigate into it.
+4. Install dependencies:
+
    ```bash
-   node server/server.js
+   npm install
+   ```
+5. Run the server:
+
+    ```bash 
+    cd server/
+    node server.js
+    ```
+6. Navigate to the app: http://localhost:3000
